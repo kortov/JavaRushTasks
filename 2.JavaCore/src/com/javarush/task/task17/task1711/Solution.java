@@ -20,52 +20,38 @@ public class Solution {
     }
 
     public static void main(String[] args) throws Exception {
-        parseArgs(args);
+        doIt(args);
     }
+
+
 
     public static void doIt(String[] args) throws Exception {
-        switch (args[0]) {
-            case "-c": {
-                createPerson(args);
-                return;
-            }
-            case "-u": {
-                updatePerson(args);
-                return;
-            }
-            case "-d": {
-                deletePerson(args);
-                return;
-            }
-            case "-i": {
-                infoAboutPerson(args);
-            }
-        }
-    }
-
-    public static String[][] parseArgs(String[] args) throws Exception {
         String[][] newArgs = null;
         switch (args[0]) {
             case "-c": {
-                newArgs = parseArray(args, 3);
+                newArgs = parseArgs(args, 3);
                 for (int i = 0; i < newArgs.length; i++) {
                     createPerson(newArgs[i]);
                 }
+                return;
             }
             case "-u": {
                 updatePerson(args);
+                return;
             }
             case "-d": {
                 deletePerson(args);
+                return;
             }
             case "-i": {
                 infoAboutPerson(args);
+                return;
             }
         }
-        return newArgs;
+        return ;
     }
 
-    private static String[][] parseArray(String[] args, int step) {
+    private static String[][] parseArgs(String[] args, int step) {
         String[] shiftedArgs = new String[args.length - 1];
         System.arraycopy(args, 1, shiftedArgs, 0, shiftedArgs.length);
 
@@ -78,10 +64,10 @@ public class Solution {
 
     public static void createPerson(String[] args) throws Exception {
         Person person;
-        if ("ж".equals(args[2])) {
-            person = Person.createFemale(args[1], format.parse(args[3]));
+        if ("ж".equals(args[1])) {
+            person = Person.createFemale(args[0], format.parse(args[2]));
         } else {
-            person = Person.createMale(args[1], format.parse(args[3]));
+            person = Person.createMale(args[0], format.parse(args[2]));
         }
         allPeople.add(person);
         System.out.println(allPeople.size() - 1);
