@@ -11,7 +11,7 @@ CRUD2
 */
 
 public class Solution {
-    public static List<Person> allPeople = new ArrayList<Person>();
+    public static volatile List<Person> allPeople = new ArrayList<Person>();
     private static SimpleDateFormat format = new SimpleDateFormat("dd/M/yyyy");
 
     static {
@@ -20,36 +20,52 @@ public class Solution {
     }
 
     public static void main(String[] args) throws Exception {
-        doIt(args);
-    }
-
-
-
-    public static void doIt(String[] args) throws Exception {
         String[][] newArgs = null;
         switch (args[0]) {
             case "-c": {
-                newArgs = parseArgs(args, 3);
-                for (int i = 0; i < newArgs.length; i++) {
-                    createPerson(newArgs[i]);
+                synchronized (allPeople) {
+                    newArgs = parseArgs(args, 3);
+                    for (int i = 0; i < newArgs.length; i++) {
+                        createPerson(newArgs[i]);
+                    }
                 }
                 return;
             }
             case "-u": {
-                updatePerson(args);
+                synchronized (allPeople) {
+                    newArgs = parseArgs(args, 4);
+                    for (int i = 0; i < newArgs.length; i++) {
+                        updatePerson(newArgs[i]);
+                    }
+                }
                 return;
             }
             case "-d": {
-                deletePerson(args);
+
+                synchronized (allPeople) {
+                    newArgs = parseArgs(args, 1);
+                    for (int i = 0; i < newArgs.length; i++) {
+                        deletePerson(newArgs[i]);
+                    }
+                }
                 return;
             }
             case "-i": {
-                infoAboutPerson(args);
+
+                synchronized (allPeople) {
+                    newArgs = parseArgs(args, 1);
+                    for (int i = 0; i < newArgs.length; i++) {
+                        infoAboutPerson(newArgs[i]);
+                    }
+                }
                 return;
             }
         }
-        return ;
     }
+
+
+
+
 
     private static String[][] parseArgs(String[] args, int step) {
         String[] shiftedArgs = new String[args.length - 1];
@@ -74,7 +90,7 @@ public class Solution {
     }
 
     public static void updatePerson(String[] args) throws Exception {
-        Person temp = allPeople.get(Integer.valueOf(args[1]));
+        Person temp = allPeople.get(Integer.valueOf(args[0]));
         if ("ж".equals(args[2])) {
             temp.setName(args[1]);
             temp.setSex(Sex.FEMALE);
@@ -87,14 +103,14 @@ public class Solution {
     }
 
     public static void deletePerson(String[] args) {
-        Person person = allPeople.get(Integer.valueOf(args[1]));
+        Person person = allPeople.get(Integer.valueOf(args[0]));
         person.setBirthDay(null);
         person.setSex(null);
         person.setName(null);
     }
 
     public static void infoAboutPerson(String[] args) throws Exception {
-        Person person = allPeople.get(Integer.valueOf(args[1]));
+        Person person = allPeople.get(Integer.valueOf(args[0]));
         String result = person.getName();
         if (Sex.MALE.equals(person.getSex())) result += " м ";
         if (Sex.FEMALE.equals(person.getSex())) result += " ж ";
